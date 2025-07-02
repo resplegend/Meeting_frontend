@@ -1,5 +1,6 @@
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import type { Meeting, CreateMeetingData, UpdateMeetingData, LoginCredentials, LoginResponse } from './types';
 
 const API_BASE_URL = 'http://localhost:3001';
 
@@ -19,51 +20,6 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
-
-export interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-export interface LoginResponse {
-  access_token: string;
-  user: {
-    id: number;
-    email: string;
-    name: string;
-  };
-}
-
-export interface Meeting {
-  id: number;
-  title: string;
-  description: string;
-  startTime: Date;
-  endTime: Date;
-  location: string;
-  attendees: string[];
-  createdBy: number;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-export interface CreateMeetingData {
-  title: string;
-  description: string;
-  startTime: Date;
-  endTime: Date;
-  location: string;
-  attendees: string[];
-}
-
-export interface UpdateMeetingData {
-  title?: string;
-  description?: string;
-  startTime?: Date;
-  endTime?: Date;
-  location?: string;
-  attendees?: string[];
-}
 
 export const authAPI = {
   login: async (credentials: LoginCredentials): Promise<LoginResponse> => {

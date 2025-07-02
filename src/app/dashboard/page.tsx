@@ -7,6 +7,7 @@ import { meetingsAPI, Meeting, CreateMeetingData } from '@/lib/api';
 import MeetingForm from '@/components/MeetingForm';
 import MeetingList from '@/components/MeetingList';
 import ErrorModal from '@/components/ErrorModal';
+import { extractErrorMessage } from '@/lib/utils';
 
 export default function DashboardPage() {
   const { user, logout, isLoading: authLoading } = useAuth();
@@ -35,13 +36,7 @@ export default function DashboardPage() {
       const data = await meetingsAPI.getAll();
       setMeetings(data);
     } catch (error: unknown) {
-      let message = 'Error loading meetings.';
-      if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
-        message = (error.response.data as any).message;
-      } else if (error instanceof Error) {
-        message = error.message;
-      }
-      setError(message);
+      setError(extractErrorMessage(error, 'Error loading meetings.'));
     } finally {
       setIsLoading(false);
     }
@@ -53,13 +48,7 @@ export default function DashboardPage() {
       setMeetings([...meetings, newMeeting]);
       setShowForm(false);
     } catch (error: unknown) {
-      let message = 'Error creating meeting.';
-      if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
-        message = (error.response.data as any).message;
-      } else if (error instanceof Error) {
-        message = error.message;
-      }
-      setError(message);
+      setError(extractErrorMessage(error, 'Error creating meeting.'));
     }
   };
 
@@ -71,13 +60,7 @@ export default function DashboardPage() {
       setEditingMeeting(null);
       setShowForm(false);
     } catch (error: unknown) {
-      let message = 'Error updating meeting.';
-      if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
-        message = (error.response.data as any).message;
-      } else if (error instanceof Error) {
-        message = error.message;
-      }
-      setError(message);
+      setError(extractErrorMessage(error, 'Error updating meeting.'));
     }
   };
 
@@ -86,13 +69,7 @@ export default function DashboardPage() {
       await meetingsAPI.delete(id);
       setMeetings(meetings.filter(m => m.id !== id));
     } catch (error: unknown) {
-      let message = 'Error deleting meeting.';
-      if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
-        message = (error.response.data as any).message;
-      } else if (error instanceof Error) {
-        message = error.message;
-      }
-      setError(message);
+      setError(extractErrorMessage(error, 'Error deleting meeting.'));
     }
   };
 

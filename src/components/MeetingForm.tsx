@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Meeting, CreateMeetingData } from '@/lib/api';
+import { Meeting, CreateMeetingData } from '@/lib/types';
 
 const meetingSchema = z.object({
   title: z.string().min(1, 'Title is required'),

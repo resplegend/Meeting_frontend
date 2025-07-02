@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Meeting } from '@/lib/api';
+import { Meeting } from '@/lib/types';
 import ConfirmModal from './ConfirmModal';
 
 interface MeetingListProps {
