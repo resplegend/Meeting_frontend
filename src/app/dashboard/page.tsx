@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
-import { meetingsAPI, Meeting, CreateMeetingData } from '@/lib/api';
+import { meetingsAPI } from '@/lib/api';
 import MeetingForm from '@/components/MeetingForm';
 import MeetingList from '@/components/MeetingList';
 import ErrorModal from '@/components/ErrorModal';
 import { extractErrorMessage } from '@/lib/utils';
+import { CreateMeetingData, Meeting } from '@/lib/types';
 
 export default function DashboardPage() {
   const { user, logout, isLoading: authLoading } = useAuth();

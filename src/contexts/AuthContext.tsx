@@ -1,8 +1,16 @@
-'use client';
+"use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import Cookies from 'js-cookie';
-import { authAPI, LoginCredentials, LoginResponse } from '@/lib/api';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import Cookies from "js-cookie";
+import { authAPI } from "@/lib/api";
+import { LoginCredentials, LoginResponse } from "@/lib/types";
+import { toast } from "react-toastify";
 
 interface User {
   id: number;
@@ -25,16 +33,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Check if user is logged in on app start
-    const token = Cookies.get('auth_token');
-    const userData = Cookies.get('user');
-    
+    const token = Cookies.get("auth_token");
+    const userData = Cookies.get("user");
+
     if (token && userData) {
       try {
         setUser(JSON.parse(userData));
       } catch (error) {
-        console.error('Error parsing user data:', error);
-        Cookies.remove('auth_token');
-        Cookies.remove('user');
+        console.error("Error parsing user data:", error);
+        Cookies.remove("auth_token");
+        Cookies.remove("user");
       }
     }
     setIsLoading(false);
@@ -43,29 +51,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (credentials: LoginCredentials) => {
     try {
       const response: LoginResponse = await authAPI.login(credentials);
-      
-      // Set cookies with appropriate options
-      Cookies.set('auth_token', response.access_token, { 
-        expires: 1, // 1 day
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict'
-      });
-      Cookies.set('user', JSON.stringify(response.user), { 
-        expires: 1, // 1 day
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict'
-      });
-      
-      setUser(response.user);
+
+      if (response.access_token && response.user) {
+        // Set cookies with appropriate options
+        Cookies.set("auth_token", response.access_token, {
+          expires: 1, // 1 day
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+        });
+        Cookies.set("user", JSON.stringify(response.user), {
+          expires: 1, // 1 day
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+        });
+
+        setUser(response.user);
+      } else {
+        toast.error("Invalid credentials");
+      }
     } catch (error) {
-      console.error('Login error:', error);
+      console.error("Login error:", error);
       throw error;
     }
   };
 
   const logout = () => {
-    Cookies.remove('auth_token');
-    Cookies.remove('user');
+    Cookies.remove("auth_token");
+    Cookies.remove("user");
     setUser(null);
   };
 
@@ -79,7 +91,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-} 
+}

@@ -4,12 +4,13 @@ export interface LoginCredentials {
 }
 
 export interface LoginResponse {
-  access_token: string;
-  user: {
+  access_token?: string;
+  user?: {
     id: number;
     email: string;
     name: string;
   };
+  message?: string; 
 }
 
 export interface Meeting {
