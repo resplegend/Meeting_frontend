@@ -43,7 +43,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (credentials: LoginCredentials) => {
     try {
       const response: LoginResponse = await authAPI.login(credentials);
-      console.log("response", response);
       
       // Set cookies with appropriate options
       Cookies.set('auth_token', response.access_token, { 

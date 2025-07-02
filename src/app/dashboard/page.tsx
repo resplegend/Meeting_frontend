@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { meetingsAPI, Meeting, CreateMeetingData } from '@/lib/api';
 import MeetingForm from '@/components/MeetingForm';
 import MeetingList from '@/components/MeetingList';
+import ErrorModal from '@/components/ErrorModal';
 
 export default function DashboardPage() {
   const { user, logout, isLoading: authLoading } = useAuth();
@@ -14,6 +15,7 @@ export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [editingMeeting, setEditingMeeting] = useState<Meeting | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // If auth is still loading, wait
@@ -32,8 +34,14 @@ export default function DashboardPage() {
     try {
       const data = await meetingsAPI.getAll();
       setMeetings(data);
-    } catch (error) {
-      console.error('Error loading meetings:', error);
+    } catch (error: unknown) {
+      let message = 'Error loading meetings.';
+      if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+        message = (error.response.data as any).message;
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -44,8 +52,14 @@ export default function DashboardPage() {
       const newMeeting = await meetingsAPI.create(meetingData);
       setMeetings([...meetings, newMeeting]);
       setShowForm(false);
-    } catch (error) {
-      console.error('Error creating meeting:', error);
+    } catch (error: unknown) {
+      let message = 'Error creating meeting.';
+      if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+        message = (error.response.data as any).message;
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+      setError(message);
     }
   };
 
@@ -56,8 +70,14 @@ export default function DashboardPage() {
       setMeetings(meetings.map(m => m.id === id ? updatedMeeting : m));
       setEditingMeeting(null);
       setShowForm(false);
-    } catch (error) {
-      console.error('Error updating meeting:', error);
+    } catch (error: unknown) {
+      let message = 'Error updating meeting.';
+      if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+        message = (error.response.data as any).message;
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+      setError(message);
     }
   };
 
@@ -65,8 +85,14 @@ export default function DashboardPage() {
     try {
       await meetingsAPI.delete(id);
       setMeetings(meetings.filter(m => m.id !== id));
-    } catch (error) {
-      console.error('Error deleting meeting:', error);
+    } catch (error: unknown) {
+      let message = 'Error deleting meeting.';
+      if (error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data) {
+        message = (error.response.data as any).message;
+      } else if (error instanceof Error) {
+        message = error.message;
+      }
+      setError(message);
     }
   };
 
@@ -104,6 +130,9 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {error && (
+        <ErrorModal message={error} onClose={() => setError(null)} />
+      )}
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-6">
