@@ -2,10 +2,8 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import type { Meeting, CreateMeetingData, UpdateMeetingData, LoginCredentials, LoginResponse } from './types';
 
-const API_BASE_URL = 'http://localhost:3001';
-
 const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: process.env.API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
